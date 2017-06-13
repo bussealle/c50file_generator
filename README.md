@@ -2,7 +2,7 @@
 generate .names and .data files from .csv
 
 ## usage
-### ordinally use
+### ordinary use
 `ruby c50file_generator.rb hoge.csv`
 ### with test data generation
 use option `-t <percentage>` for specifing the parcentage of samples for testing data (.test file)
