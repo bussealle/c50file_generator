@@ -28,7 +28,7 @@ end
 csv_data.each_with_index do |csv_row, i|
   next if i==0
   csv_row.each_with_index do |value, j|
-    next if value=='?' || value.empty?
+    next if value=='?' || value=='N/A'  || value.empty?
     # detect numeric value
     if value =~ /\A(-)?\d+(\.\d+)?\z/
       output_hash[param_name[j]] << 'continuous' if output_hash[param_name[j]].empty?
