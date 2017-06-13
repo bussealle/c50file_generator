@@ -5,14 +5,20 @@ require 'csv'
 
 #### if you want to execute this program from editor
 #### delete from here
-raise "usage: arg1:<path to csv file>" unless ARGV.length == 1
+raise "\nusage:\targ1:<path to csv file>\t<option>\n\t\toption: -t <the percentage of "\
+"samples for test>" unless ARGV.length == 1 || (ARGV.length == 3 && ARGV[1] == '-t')
 raise "'#{ARGV[0]}' is not .csv file" unless ARGV[0].include?('.csv')
 csv_file = ARGV[0]
+test_percent = 0
+test_percent = ARGV[2].to_i if ARGV.length == 3
+raise "-t <the percentage should be in 0-100>" unless (0..100).include?(test_percent)
 #### to here
 #csv_file = 'your csv'
+#test_percent = 0
 
 
 data_file = "#{csv_file.match(/(.*)\..*/)[1]}.data"
+test_file = "#{csv_file.match(/(.*)\..*/)[1]}.test"
 names_file = "#{csv_file.match(/(.*)\..*/)[1]}.names"
 
 puts "reading csv files..."
@@ -42,16 +48,24 @@ csv_data.each_with_index do |csv_row, i|
 end
 
 # write .data file
+threshold = csv_data.length * test_percent/100
 File.open(data_file, 'w:utf-8') do |data_f|
-  File.open(csv_file, 'r:utf-8') do |csv_f|
-    sline = csv_f.gets
-    while sline = csv_f.gets do
-      data_f.write(sline)
+  File.open(test_file, 'w:utf-8') do |test_f|
+    csv_data.delete_at(0)
+    csv_data.shuffle!
+    csv_data.each_with_index do |data,i|
+      if i < threshold
+        test_f.write("#{data.join(',')}\n")
+      else
+        data_f.write("#{data.join(',')}\n")
+      end
     end
   end
 end
+File.delete(test_file) if threshold==0
 puts
 puts "'#{data_file}' generated"
+puts "'#{test_file}' generated" unless threshold==0
 # write .names file
 File.open(names_file, 'w:utf-8') do |file|
   file.write("<TARGET ATTRIBUTE>.\t| attribute containing class to be predicted\n\n")
