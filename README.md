@@ -1,5 +1,5 @@
 # c50file_generator
-generate .names and .data files from .csv
+generate .names and .data (also .test) files from .csv
 
 ## usage
 ### ordinary use
